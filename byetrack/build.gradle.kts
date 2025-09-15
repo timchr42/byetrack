@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
+    id("maven-publish")
 }
 
 android {
@@ -26,6 +27,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
+    publishing {
+        singleVariant("release")
+    }
 }
 
 dependencies {
@@ -36,4 +41,19 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+}
+
+// local publishing script
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                from(components["release"])
+
+                groupId = "com.github.timchr42"
+                artifactId = "byetrack"
+                version = "0.1.0"
+            }
+        }
+    }
 }
