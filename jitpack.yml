@@ -1,2 +1,2 @@
-jkd:
-  -openjkd17
+jdk:
+  - openjdk17
