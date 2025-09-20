@@ -2,12 +2,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application>
+        <!-- Private endpoint: only invocable via PI -->
         <receiver
-            android:name=".TokenReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="de.cispa.hytrack.POLICY_TRANSMISSION" />
-            </intent-filter>
-        </receiver>
+            android:name="de.cispa.byetrack.TokenReceiver"
+            android:exported="false" />
+
+        <provider
+            android:name="de.cispa.byetrack.AppPipeProvider"
+            android:authorities="${applicationId}.pipe"
+            android:exported="true" />
+
     </application>
+
+    <queries>
+        <provider android:authorities="org.mozilla.geckoview_example.callerid" />
+    </queries>
+
 </manifest>
