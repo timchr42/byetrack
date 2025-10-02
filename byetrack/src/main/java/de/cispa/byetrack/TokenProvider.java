@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 
 // Query with "content:// + $packagename + .tokens"
-class TokenProvider extends ContentProvider {
+public class TokenProvider extends ContentProvider {
     private static final String LOGTAG = "TokenProvider";
     private static final Set<String> BROWSER_WHITELIST = Set.of(
             "org.mozilla.fenix.debug",
