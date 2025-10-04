@@ -21,12 +21,11 @@ public class ByetrackClient {
         // Get prefs on demand (no statics)
         String wildcardTokens = TokenManager.getWildcardTokens(domainName);
         String finalTokens = TokenManager.getFinalTokens(domainName);
-        String packageName = context.getPackageName();
 
         Bundle byetrackData = new Bundle();
         byetrackData.putString("wildcard_tokens", wildcardTokens);
         byetrackData.putString("final_tokens", finalTokens);
-        byetrackData.putString("package_name", packageName);
+        byetrackData.putBinder("binder_token", new BinderToken());
         intent.putExtra(Constants.BYETRACK_DATA, byetrackData);
     }
 }
