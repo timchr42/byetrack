@@ -25,7 +25,8 @@ public class ByetrackClient {
         Bundle byetrackData = new Bundle();
         byetrackData.putString("wildcard_tokens", wildcardTokens);
         byetrackData.putString("final_tokens", finalTokens);
-        byetrackData.putBinder("binder_token", new BinderToken());
+        byetrackData.putInt("package_uid", context.getApplicationInfo().uid);
+
         intent.putExtra(Constants.BYETRACK_DATA, byetrackData);
     }
 }
