@@ -9,4 +9,8 @@
 
     </application>
 
+    <queries>
+        <package android:name="org.mozilla.fenix.debug" />
+        <package android:name="org.mozilla.geckoview_example" />
+    </queries>
 </manifest>

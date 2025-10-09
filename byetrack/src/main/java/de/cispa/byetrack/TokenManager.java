@@ -5,9 +5,11 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Iterator;
+import java.util.Set;
 
 final class TokenManager {
     private static final String LOGTAG = "TokenManager";
@@ -102,16 +104,73 @@ final class TokenManager {
         Log.d(LOGTAG, "Stored tokens for " + domain + ": " + existing);
     }
 
-    static String getWildcardTokens(String domainName) {
+    static String getWildcardTokens(String domainName, Set<String> additionalHosts) {
         boolean isAmbient = storage_isAmbient.getBoolean(Constants.ISAMBIENT, false);
         Log.d(LOGTAG, isAmbient ? "Ambient: true" : "Ambient: false");
+        if (isAmbient) {
+            return storage_wildcard.getString("*", "error retrieving ambient token");
+        }
 
-        return isAmbient? storage_wildcard.getString("*", "error retrieving ambient token") : storage_wildcard.getString(domainName, "");
-
+        return getTokens(domainName, additionalHosts, storage_wildcard);
     }
 
-    static String getFinalTokens(String domainName) {
-        return storage_final.getString(domainName, "");
+    static String getFinalTokens(String domainName, Set<String> additionalHosts) {
+        return getTokens(domainName, additionalHosts, storage_final);
+    }
+
+    static void replaceToken(String domain, String tokenOld, String tokenNew) {
+        String tokensStr = storage_final.getString(domain, "");
+        try {
+            JSONArray tokens = new JSONArray(tokensStr);
+            for (int i = 0; i < tokens.length(); i++) {
+                String token = tokens.getString(i);
+                if (token.equals(tokenOld)) {
+                    tokens.put(i, tokenNew);
+                    break;
+                }
+            }
+            storage_final.edit().putString(domain, tokens.toString()).apply();
+        } catch (Exception e) {
+            Log.e(LOGTAG, "Failed to replace tokens", e);
+        }
+    }
+
+    private static String getTokens(String domainName, Set<String> additionalHosts, SharedPreferences prefs) {
+        String tokens = prefs.getString(domainName, "");
+        if (additionalHosts == null || additionalHosts.isEmpty())
+            return tokens;
+
+        // Merge
+        String tokensStrForHost;
+        for (String host : additionalHosts) {
+            tokensStrForHost = prefs.getString(host, "");
+            tokens = mergeJsonString(tokens, tokensStrForHost);
+        }
+        Log.d(LOGTAG, "[Byetrack] Merged Token String: " + tokens);
+
+        return tokens;
+    }
+
+    private static String mergeJsonString(String json1, String json2) {
+        if (json1.isEmpty()) return json2;
+        if (json2.isEmpty()) return json1;
+
+        try {
+            JSONArray arr1 = new JSONArray(json1);
+            JSONArray arr2 = new JSONArray(json2);
+
+            for (int i = 0; i < arr2.length(); i++) {
+                String token = arr2.getString(i);
+                arr1.put(token);
+            }
+
+            Log.d(LOGTAG, "Size of Merged Token String: " + arr1.length());
+            return arr1.toString();
+
+        } catch (JSONException e) {
+            Log.e(LOGTAG, "Failed to merge JSON strings", e);
+            return "";
+        }
     }
 
 }
