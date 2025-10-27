@@ -45,7 +45,10 @@ public class TokenProvider extends ContentProvider {
         Optional.ofNullable(isAmbient)
                 .ifPresent(TokenManager::storeIsAmbient);
 
-        Log.d(LOGTAG, "[Byetrack] Received values from " + callingPkg + ":\n-Wildcard Tokens: " + wildcard_tokens_str + "\n- Final Tokens:" + final_tokens_str + "\n- Ambient" + isAmbient);
+        Log.d(LOGTAG, "[Byetrack] Received values from " + callingPkg + ":" +
+                "\n- Wildcard Tokens: " + wildcard_tokens_str +
+                "\n- Final Tokens: " + final_tokens_str +
+                "\n- Ambient Mode: " + isAmbient);
 
         return null;
     }
