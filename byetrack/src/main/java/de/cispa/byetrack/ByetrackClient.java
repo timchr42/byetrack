@@ -1,9 +1,7 @@
 package de.cispa.byetrack;
 
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,7 +31,6 @@ public class ByetrackClient {
         Bundle byetrackData = new Bundle();
         byetrackData.putString("wildcard_tokens", wildcardTokens);
         byetrackData.putString("final_tokens", finalTokens);
-        byetrackData.putInt("package_uid", context.getApplicationInfo().uid);
 
         intent.putExtra(Constants.BYETRACK_DATA, byetrackData);
     }
