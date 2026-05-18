@@ -22,6 +22,16 @@ public class TokenProvider extends ContentProvider {
             "org.mozilla.geckoview_example"
     );
 
+    private boolean isValidOrigin(int uid) {
+        String callingPkg = Objects.requireNonNull(getContext()).getPackageManager().getNameForUid(uid);
+
+        if (!BROWSER_WHITELIST.contains(callingPkg)) {
+            Log.w(LOGTAG, "[Byetrack] Rejected tokens from unexpected package: " + callingPkg);
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues values) {
         Context context = Objects.requireNonNull(getContext());
@@ -53,12 +63,17 @@ public class TokenProvider extends ContentProvider {
         return null;
     }
 
-    // unused stub methods
-    @Override public boolean onCreate() {
-        return true;
+    @Override public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
+        //if (!isValidOrigin()) {
+        //    return 0;
+        //}
+        // Request comes from browser#
+        return 1;
     }
+
+    // unused stub methods
+    @Override public boolean onCreate() { return true; }
     @Override public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) { return null; }
-    @Override public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) { return 0; }
     @Override public int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs) { return 0; }
     @Override public String getType(@NonNull Uri uri) { return null; }
 }

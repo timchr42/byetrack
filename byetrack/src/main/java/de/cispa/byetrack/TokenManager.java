@@ -82,26 +82,6 @@ final class TokenManager {
             Log.w(LOGTAG, "Value for domain " + domain + " is not a JSON array");
             return;
         }
-
-        // Load existing tokens for that domain
-        JSONArray existing;
-        try {
-            String existingStr = storage_final.getString(domain, "[]");
-            existing = new JSONArray(existingStr);
-        } catch (Exception e) {
-            Log.w(LOGTAG, "Corrupt stored tokens for " + domain + " -> resetting", e);
-            existing = new JSONArray();
-        }
-
-        // Merge existing with incoming tokens
-        for (int i = 0; i < incoming.length(); i++) {
-            existing.put(incoming.opt(i));
-        }
-
-        // Persist asynchronously (due to Firefox StrictMode policy)
-        storage_final.edit().putString(domain, existing.toString()).apply();
-
-        Log.d(LOGTAG, "Stored tokens for " + domain + ": " + existing);
     }
 
     static String getWildcardTokens(String domainName, Set<String> additionalHosts) {
@@ -171,6 +151,15 @@ final class TokenManager {
             Log.e(LOGTAG, "Failed to merge JSON strings", e);
             return "";
         }
+    }
+
+    private static void clearTokenStorage(SharedPreferences prefs) {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.clear().apply();
+    }
+
+    static void clearFinalTokenStorage(Context context) {
+        clearTokenStorage(storage_final);
     }
 
 }

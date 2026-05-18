@@ -62,10 +62,4 @@ public final class DebugHelp {
 
         return builder.toString();
     }
-
-    public static void clearTokenStorage(SharedPreferences prefs) {
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.clear().apply();
-    }
-
 }
